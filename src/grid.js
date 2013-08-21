@@ -83,8 +83,6 @@ Seed.TileIter = function(x0, y0, x1, y1, level) {
 
     this.currentX = x0 - 1;
     this.currentY = y0;
-
-    console.log(this.currentX, this.currentY)
 };
 
 Seed.TileIter.prototype = {
