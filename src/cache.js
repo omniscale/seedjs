@@ -1,8 +1,10 @@
-Seed.LocalStore = function(prefix) {
+Seed.Cache = {};
+
+Seed.Cache.LocalStore = function(prefix) {
     this.prefix = prefix;
 };
 
-Seed.LocalStore.prototype = {
+Seed.Cache.LocalStore.prototype = {
     storeTile: function(tile, success) {
         console.log(tile);
         window.localStorage.setItem(
@@ -13,12 +15,12 @@ Seed.LocalStore.prototype = {
 };
 
 
-Seed.CouchDB = function(url) {
+Seed.Cache.CouchDB = function(url) {
     this.url = url;
 };
 
 
-Seed.CouchDB.prototype = {
+Seed.Cache.CouchDB.prototype = {
     storeTile: function(tile, success) {
         var url = this.url;
         url = url.replace(/\{TileCol\}/, tile.coord[0]);

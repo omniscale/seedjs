@@ -1,6 +1,3 @@
-
-var Seed = {};
-
 Seed.BBox = function(minx, miny, maxx, maxy) {
     this.minx = minx;
     this.miny = miny;
@@ -71,7 +68,17 @@ Seed.Grid.prototype = {
             'numTiles': [lr[0] - ul[0] + 1, lr[1] - ul[1] + 1],
             'tiles': new Seed.TileIter(ul[0], ul[1], lr[0], lr[1], level)
         }
+    },
+
+    estimateTiles: function(bbox, levels) {
+        var tiles = 0;
+        for (var level = levels[0]; level <= levels[1]; level++) {
+            var affected = this.affectedTiles(level, bbox);
+            tiles += affected.numTiles[0] * affected.numTiles[1];
+        };
+        return tiles;
     }
+
 };
 
 Seed.TileIter = function(x0, y0, x1, y1, level) {
