@@ -38,9 +38,18 @@ Seed.Seeder.prototype = {
 
         var nextStep = this.next.bind(this);
         var progressStep = this.progress.bind(this);
-        this.source.fetchTile(tile, function(data) {
-            progressStep(tile);
-            nextStep();
+        var seeder = this;
+        this.source.fetchTile(tile, function(tile) {
+            function continueSeed() {
+                progressStep(tile);
+                nextStep();
+            }
+
+            if (seeder.dest != undefined) {
+                seeder.dest.storeTile(tile, continueSeed);
+            } else {
+                continueSeed();
+            }
         });
     },
 
