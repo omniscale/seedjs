@@ -1,5 +1,7 @@
 var Seed = {};
 
+Seed.CORSProxyURL = null;
+
 Seed.Seeder = function(task, source, dest) {
     this.task = task;
     this.source = source;

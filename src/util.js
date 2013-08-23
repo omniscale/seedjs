@@ -29,3 +29,17 @@ Seed.Util.imgToDataURL = function(img) {
     // TODO handle image/jpeg
     return canvas.toDataURL("image/png");
 };
+
+
+Seed.Util.fetchTileURL = function (url, tile, success) {
+    var img = new Image();
+    if (Seed.CORSProxyURL != null && url.match(/https?:\/\//)) {
+        img.crossOrigin = "Anonymous";
+        img.src = Seed.CORSProxyURL + url;
+    } else {
+        img.src = url;
+    }
+    img.onload = function(){
+        success({'url': url, 'coord': tile, 'data': Seed.Util.imgToDataURL(img)});
+    }
+}
