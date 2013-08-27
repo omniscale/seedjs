@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        <title>Seed OpenLayers Example</title>
+
+        <script src="http://openlayers.org/api/OpenLayers.js"></script>
+        <style type="text/css">
+            .smallmap {
+                width: 800px;
+                height: 600px;
+                border: 1px solid #ccc;
+            }
+            p {
+                width: 512px;
+            }
+            .olMap .olControlAttribution {
+                bottom: 3px;
+            }
+
+            /* avoid pink tiles */
+            .olImageLoadError {
+                display: none !important;
+                background-color: transparent !important;
+            }
+        </style>
+
+        <script type="text/javascript" src="../seed.dev.js"></script>
+
+        <script type="text/javascript">
+            var map, boxLayer, seeder;
+            function init(){
+                map = new OpenLayers.Map('map');
+
+                var wmsLayer = new OpenLayers.Layer.OSM("OSM");
+                var offlineLayer = new OpenLayers.Layer.XYZ("Cached OSM",
+                    ["http://localhost:5984/seedjs/${z}-${x}-${y}/tile"],
+                    {sphericalMercator: true}
+                );
+                boxLayer = new OpenLayers.Layer.Vector("Box layer");
+                boxLayer.events.register('beforefeatureadded', boxLayer, boxLayer.removeAllFeatures);
+                boxLayer.events.register('featureadded', boxLayer, updateEstimate);
+
+                map.addLayers([wmsLayer, offlineLayer, boxLayer]);
+
+                var drawControl = new OpenLayers.Control.DrawFeature(boxLayer,
+                    OpenLayers.Handler.RegularPolygon, {
+                        handlerOptions: {
+                            sides: 4,
+                            irregular: true
+                        }
+                    }
+                )
+                map.addControl(drawControl);
+                map.addControl(new OpenLayers.Control.LayerSwitcher());
+                drawControl.activate();
+                // allow panning
+                drawControl.handler.stopDown = false;
+                drawControl.handler.stopUp = false;
+
+                map.setCenter(new OpenLayers.LonLat(914253.4198771,7009764.109650), 10);
+            }
+
+            function seedProgress(progress) {
+                if (!progress.running) {
+                    document.getElementById("seedBtn").onclick = seed;
+                    document.getElementById("seedBtn").value = "Seed";
+                }
+
+                document.getElementById("seededTiles").innerHTML = progress.tiles;
+                document.getElementById("seedTotalTiles").innerHTML = progress.totalTiles;
+            }
+
+            function updateEstimate() {
+                if (boxLayer.features.length == 0) {
+                    return;
+                }
+
+                var bounds = boxLayer.features[0].geometry.getBounds();
+                var minLevel = parseInt(document.getElementById("minLevel").value);
+                var maxLevel = parseInt(document.getElementById("maxLevel").value);
+                var grid = new Seed.Grid();
+                var totalTiles = grid.estimateTiles(
+                    new Seed.BBox(bounds.left, bounds.bottom, bounds.right, bounds.top),
+                    [minLevel, maxLevel]
+                );
+
+                document.getElementById("seededTiles").innerHTML = 0;
+                document.getElementById("seedTotalTiles").innerHTML = totalTiles;
+            }
+
+            function stopSeed() {
+                seeder.stop();
+                document.getElementById("seedBtn").onclick = seed;
+                document.getElementById("seedBtn").value = "Seed";
+            }
+
+            function seed() {
+                if (boxLayer.features.length == 0) {
+                    alert("draw a box first");
+                    return;
+                }
+                document.getElementById("seedBtn").onclick = stopSeed;
+                document.getElementById("seedBtn").value = "Stop";
+
+
+                var bounds = boxLayer.features[0].geometry.getBounds();
+                var minLevel = parseInt(document.getElementById("minLevel").value);
+                var maxLevel = parseInt(document.getElementById("maxLevel").value);
+
+                var source = new Seed.Source.WMTSSource('http://a.tile.openstreetmap.org/{TileMatrix}/{TileCol}/{TileRow}.png');
+                var cache = new Seed.Cache.CouchDB('http://localhost:8888/proxy/http://localhost:5984/seedjs/{TileMatrix}-{TileCol}-{TileRow}/tile');
+                seeder = new Seed.Seeder({
+                    grid: new Seed.Grid(),
+                    bbox: new Seed.BBox(bounds.left, bounds.bottom, bounds.right, bounds.top),
+                    levels: [minLevel, maxLevel]
+                }, source, cache);
+
+                seeder.start(seedProgress)
+
+            }
+        </script>
+    </head>
+    <body onload="init()">
+        <h1 id="title">Minimal SeedJS OpenLayers Example</h1>
+        <p>Shift-drag to draw BBOX and click Seed to start seeding within the levels.</p>
+        <div id="map" class="smallmap"></div>
+        <p>
+            Zoom level
+            <input id="minLevel" value="0" size="2" onkeyup="updateEstimate();" />
+            <input id="maxLevel" value="10" size="2" onkeyup="updateEstimate();" />
+            <br>
+            <input type="button" id="seedBtn" value="Seed" onclick="seed();" />
+        </p>
+        <p>
+            <span id="seededTiles">?</span>/<span id="seedTotalTiles">?</span>
+        </p>
+
+    </body>
+</html>
