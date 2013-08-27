@@ -1,5 +1,11 @@
+/** Util
+ * @namespace
+*/
 Seed.Util = {};
 
+/** Convert base64 encoded data to Blob.
+ * @param {string} base64 - binary data as base64 encoded string
+ */
 Seed.Util.base64ToBlob = function(base64) {
     var binary = atob(base64);
     var len = binary.length;
@@ -11,14 +17,23 @@ Seed.Util.base64ToBlob = function(base64) {
     return new Blob([view]);
 };
 
-Seed.Util.dataURLToBlob = function(dataUrl) {
+/**
+ * Convert data URI to Blob.
+ * @param {string} dataURI
+ */
+Seed.Util.dataURIToBlob = function(dataURI) {
     return Seed.Util.base64ToBlob(
-        dataUrl.replace(/^data:image\/(png|jpg);base64,/, "")
+        dataURI.replace(/^data:image\/(png|jpg);base64,/, "")
     );
 };
 
-Seed.Util.imgToDataURL = function(img) {
-    // use canvas to get the image as dataURL
+
+/**
+ * Convert Image to data URI.
+ * @param {Image} img
+ */
+Seed.Util.imgToDataURI = function(img) {
+    // use canvas to get the image as dataURI
     var canvas = document.createElement("canvas");
     canvas.width = img.width;
     canvas.height = img.height;
@@ -27,10 +42,12 @@ Seed.Util.imgToDataURL = function(img) {
     ctx.drawImage(img, 0, 0);
 
     // TODO handle image/jpeg
-    return canvas.toDataURL("image/png");
+    return canvas.toDataURI("image/png");
 };
 
-
+/**
+ * Fetch a tile from URL and call {success} callback.
+ */
 Seed.Util.fetchTileURL = function (url, tile, success) {
     var img = new Image();
     if (Seed.CORSProxyURL != null && url.match(/https?:\/\//)) {
@@ -40,6 +57,6 @@ Seed.Util.fetchTileURL = function (url, tile, success) {
         img.src = url;
     }
     img.onload = function(){
-        success({'url': url, 'coord': tile, 'data': Seed.Util.imgToDataURL(img)});
+        success({'url': url, 'coord': tile, 'data': Seed.Util.imgToDataURI(img)});
     }
 }

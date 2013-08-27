@@ -37,25 +37,25 @@ describe("Grid", function() {
   it("returns tile iter for affected tiles", function() {
     var affected = grid.affectedTiles(1);
     expect(affected.numTiles).toEqual([2, 2]);
-    expect(affected.tiles.next()).toEqual([0, 0, 1]);
-    expect(affected.tiles.next()).toEqual([1, 0, 1]);
-    expect(affected.tiles.next()).toEqual([0, 1, 1]);
-    expect(affected.tiles.next()).toEqual([1, 1, 1]);
-    expect(affected.tiles.next()).toEqual(null);
+    expect(affected.next()).toEqual([0, 0, 1]);
+    expect(affected.next()).toEqual([1, 0, 1]);
+    expect(affected.next()).toEqual([0, 1, 1]);
+    expect(affected.next()).toEqual([1, 1, 1]);
+    expect(affected.next()).toEqual(null);
 
     affected = grid.affectedTiles(2);
     expect(affected.numTiles).toEqual([4, 4]);
-    expect(affected.tiles.next()).toEqual([0, 0, 2]);
-    expect(affected.tiles.next()).toEqual([1, 0, 2]);
-    expect(affected.tiles.next()).toEqual([2, 0, 2]);
-    expect(affected.tiles.next()).toEqual([3, 0, 2]);
-    expect(affected.tiles.next()).toEqual([0, 1, 2]);
+    expect(affected.next()).toEqual([0, 0, 2]);
+    expect(affected.next()).toEqual([1, 0, 2]);
+    expect(affected.next()).toEqual([2, 0, 2]);
+    expect(affected.next()).toEqual([3, 0, 2]);
+    expect(affected.next()).toEqual([0, 1, 2]);
   });
 
   it("affected tiles iter contains expected number of tiles", function() {
     affected = grid.affectedTiles(4);
     var tileCount = 0;
-    affected.tiles.foreach(function(tile) {
+    affected.foreach(function(tile) {
         tileCount += 1;
         expect(tile[2]).toEqual(4);
     })
@@ -70,7 +70,7 @@ describe("Grid", function() {
     affected = grid.affectedTiles(0, bbox);
     expect(affected.numTiles).toEqual([1, 1]);
     tileCount = 0;
-    affected.tiles.foreach(function(tile) {
+    affected.foreach(function(tile) {
         tileCount += 1;
         expect(tile).toEqual([0, 0, 0]);
     })
@@ -81,7 +81,7 @@ describe("Grid", function() {
     affected = grid.affectedTiles(4, bbox);
     expect(affected.numTiles).toEqual([1, 1]);
     tileCount = 0;
-    affected.tiles.foreach(function(tile) {
+    affected.foreach(function(tile) {
         tileCount += 1;
         expect(tile).toEqual([8, 5, 4]);
     })
@@ -92,7 +92,7 @@ describe("Grid", function() {
     expect(affected.numTiles).toEqual([14, 11]);
 
     tileCount = 0;
-    affected.tiles.foreach(function(tile) {
+    affected.foreach(function(tile) {
         tileCount += 1;
         expect(tile[0]).toBeGreaterThan(34255);
         expect(tile[1]).toBeGreaterThan(21299);

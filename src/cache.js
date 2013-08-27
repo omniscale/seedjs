@@ -1,5 +1,20 @@
+/**
+ * @namespace Seed.Cache
+ */
 Seed.Cache = {};
 
+/**
+ * Store tiles inside a HTML5 LocalStorage.
+ *
+ * Each tile is stored with a prefix and the full URL as the key.
+ * Use `olCache_` as prefix to be able to use
+ * {@link http://dev.openlayers.org/docs/files/OpenLayers/Control/CacheRead-js.html OpenLayers CacheRead}.
+ *
+ * NOTE: HTML5 LocalStorage only allows storage of a few MB, depending on the browser.
+ *
+ * @constructor
+ * @param prefix {string} - Prefix for each tile key.
+ */
 Seed.Cache.LocalStore = function(prefix) {
     this.prefix = prefix;
 };
@@ -14,7 +29,14 @@ Seed.Cache.LocalStore.prototype = {
     }
 };
 
-
+/**
+ * Store tiles inside a couchdb.
+ *
+ * @constructor
+ * @param url {string} - URL template for the tile attachment.
+ *    Use "{TileCol}", "{TileRow}", "{TileMatrix}" as placeholder for
+ *    x, y and level of the tiles.
+ */
 Seed.Cache.CouchDB = function(url) {
     this.url = url;
 };
@@ -33,7 +55,7 @@ Seed.Cache.CouchDB.prototype = {
         };
 
         var blob = new Blob(
-            [Seed.Util.dataURLToBlob(tile.data)],
+            [Seed.Util.dataURIToBlob(tile.data)],
             {type: 'image/png'}
         );
         req.send(blob);

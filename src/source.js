@@ -1,5 +1,19 @@
+/** Sources
+ * @namespace
+*/
 Seed.Source = {};
 
+/**
+ * WMTSSource fetches tiles from a WMTS source.
+ *
+ * The source only supports the WMTS OSM/Google Maps compatible tile
+ * matrix set; origin noth/west.
+ *
+ * @constructor
+ * @param url {string} - URL of a WMTS tile request.
+ *    Use "{TileCol}", "{TileRow}", "{TileMatrix}" as placeholder for
+ *    x, y and level of the tiles.
+ */
 Seed.Source.WMTSSource = function(url) {
     this.url = url;
 };
@@ -15,6 +29,16 @@ Seed.Source.WMTSSource.prototype = {
     }
 };
 
+
+/**
+ * WMSSource fetches tiles from a WMS source.
+ *
+ * The source only supports EPSG:3857.
+ *
+ * @constructor
+ * @param url {string} - URL of a full GetMap request, use "{BBOX}" as
+ *   a placeholder for the BBOX value.
+ */
 Seed.Source.WMSSource = function(url) {
     this.url = url;
     this.grid = new Seed.Grid();
@@ -34,6 +58,16 @@ Seed.Source.WMSSource.prototype = {
 };
 
 
+/**
+ * TestSource is a source for use in unit tests. The tile coordinates
+ * of all fetched tiles are stored in
+ *
+ * The source only supports EPSG:3857.
+ *
+ * @constructor
+ * @param url {string} - ignored
+ * @property {array} fetchedTiles - lists all fetched tiles
+ */
 Seed.Source.TestSource = function(url) {
     this.url = url;
     this.fetchedTiles = [];

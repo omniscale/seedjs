@@ -1,3 +1,13 @@
+
+/** BBOX.
+ * @name BBox
+ *
+ * @constructor
+ * @param minx {float}
+ * @param miny {float}
+ * @param maxx {float}
+ * @param maxy {float}
+ */
 Seed.BBox = function(minx, miny, maxx, maxy) {
     this.minx = minx;
     this.miny = miny;
@@ -20,6 +30,13 @@ Seed.DefaultBBox = new Seed.BBox(
     20037508.342789244
 );
 
+/** Grid describes how tiles are aligned.
+ *
+ * This grid only supports a OSM/Google Maps compatible grid in EPSG:3857,
+ * with a tile size of 256x256 and origin in north/west.
+ *
+ * @constructor
+ */
 Seed.Grid = function() {
     this.resolutions = [];
     this.tileSize = [256, 256];
@@ -33,6 +50,13 @@ Seed.Grid = function() {
 };
 
 Seed.Grid.prototype = {
+    /** Return BBOX of the tile.
+     *
+     * @param x {int} - x tile coordinate
+     * @param y {int} - y tile coordinate
+     * @param z {int} - zoom level
+     * @returns {BBox} - BBOX of the tile
+     */
     tileBBox: function(x, y, z) {
         var res = this.resolutions[z];
 
@@ -45,6 +69,13 @@ Seed.Grid.prototype = {
         return new Seed.BBox(x0, y0, x1, y1);
     },
 
+    /**
+     * Return tile coordinate in given level.
+     *
+     * @param x {int} - x/long coordinate in EPSG:3857
+     * @param y {int} - y/lat coordinate in EPSG:3857
+     * @param level {int} - zoom level
+     */
     tile: function(x, y, level) {
         var res = this.resolutions[level];
         x = x - this.bbox.minx;
@@ -55,6 +86,13 @@ Seed.Grid.prototype = {
         return [Math.floor(tileX), Math.floor(tileY), level];
     },
 
+    /**
+     * Get all tiles that intersects a bbox at given level.
+     *
+     * @param level {array}
+     * @param bbox {BBox}
+     * @returns {TileIter} - iterator over all affected tiles
+     */
     affectedTiles: function(level, bbox) {
         if (bbox == undefined) {
             bbox = this.bbox;
@@ -64,12 +102,16 @@ Seed.Grid.prototype = {
         ul = this.tile(bbox.minx + delta, bbox.maxy - delta, level);
         lr = this.tile(bbox.maxx - delta, bbox.miny + delta, level);
 
-        return {
-            'numTiles': [lr[0] - ul[0] + 1, lr[1] - ul[1] + 1],
-            'tiles': new Seed.TileIter(ul[0], ul[1], lr[0], lr[1], level)
-        }
+        return new Seed.TileIter(ul[0], ul[1], lr[0], lr[1], level);
     },
 
+    /**
+     * Estimate the number of tiles that intersect the bbox.
+     *
+     * @param bbox {BBox}
+     * @param levels {array} - start and end level
+     * @returns {int} - number of tiles
+     */
     estimateTiles: function(bbox, levels) {
         var tiles = 0;
         for (var level = levels[0]; level <= levels[1]; level++) {
@@ -81,18 +123,31 @@ Seed.Grid.prototype = {
 
 };
 
+/**
+ * Iterator over a set of tiles.
+ *
+ * @constructor
+ * @property numTiles {int} - total number of tiles this iterator returns
+ */
 Seed.TileIter = function(x0, y0, x1, y1, level) {
     this.x0 = x0;
     this.y0 = y0;
     this.x1 = x1;
     this.y1 = y1;
     this.level = level;
+    this.numTiles = [x1 - x0 + 1, y1 - y0 + 1];
 
     this.currentX = x0 - 1;
     this.currentY = y0;
 };
 
 Seed.TileIter.prototype = {
+    /**
+     * Return next tile.
+     *
+     * @returns {array|null} - array with x, y and level of the tile
+     *     or null if the iterator stopped
+     */
     next: function() {
         this.currentX += 1;
 

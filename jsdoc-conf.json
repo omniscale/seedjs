@@ -1,0 +1,9 @@
+{
+    "tags": {
+        "allowUnknownTags": false
+    },
+    "opts": {
+        "lenient": true,
+        "private": true
+    }
+}
