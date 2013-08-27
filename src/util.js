@@ -42,7 +42,7 @@ Seed.Util.imgToDataURI = function(img) {
     ctx.drawImage(img, 0, 0);
 
     // TODO handle image/jpeg
-    return canvas.toDataURI("image/png");
+    return canvas.toDataURL("image/png");
 };
 
 /**
@@ -50,9 +50,13 @@ Seed.Util.imgToDataURI = function(img) {
  */
 Seed.Util.fetchTileURL = function (url, tile, success) {
     var img = new Image();
-    if (Seed.CORSProxyURL != null && url.match(/https?:\/\//)) {
+    if (url.match(/https?:\/\//)) {
         img.crossOrigin = "Anonymous";
-        img.src = Seed.CORSProxyURL + url;
+        if (Seed.CORSProxyURL != null) {
+            img.src = Seed.CORSProxyURL + url;
+        } else {
+            img.src = url;
+        }
     } else {
         img.src = url;
     }
