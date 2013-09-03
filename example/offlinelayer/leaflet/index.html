@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Leaflet Offline/Online Layer</title>
+
+    <style type="text/css">
+    </style>
+    <link rel="stylesheet" href="leaflet.css" type="text/css">
+    <script src="leaflet.js"></script>
+    <script src="offline.js"></script>
+  </head>
+  <body onload="init()">
+    <h1 id="title">Offline Storage Example</h1>
+
+    <div id="shortdesc">Caching viewed tiles</div>
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+        #map {
+            height: 80%;
+            width: 80%;
+        }
+        .olImageLoadError {
+            display: none !important;
+            background-color: transparent !important;
+        }
+        .olControlAttribution {
+            bottom: 0;
+        }
+    </style>
+
+    <div id="map"></div>
+    <script type="text/javascript">
+
+var map;
+var sourceLayer, cacheLayer;
+
+function init() {
+    var map = L.map('map').setView([0, 0], 5);
+    var sourceLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {});
+
+    L.tileLayer.cached('http://localhost:8888/proxy/http://localhost:5984/seedjs/{z}-{x}-{y}/tile', {
+        sourceLayer: sourceLayer
+    }).addTo(map);
+    }
+
+    </script>
+  </body>
+</html>
