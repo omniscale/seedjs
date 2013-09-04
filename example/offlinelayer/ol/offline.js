@@ -1,4 +1,4 @@
-CacheTile = OpenLayers.Class(OpenLayers.Tile.Image, {
+OpenLayers.CouchDBTile = OpenLayers.Class(OpenLayers.Tile.Image, {
     crossOriginKeyword: "anonymous",
 
     initialize: function() {
@@ -73,12 +73,13 @@ CacheTile = OpenLayers.Class(OpenLayers.Tile.Image, {
         return this._base64ToBlob(
             dataURI.replace(/^data:image\/(png|jpg);base64,/, "")
         );
-    }
+    },
+    CLASS_NAME: "OpenLayers.CouchDBTile"
 });
 
 
-CacheLayer = OpenLayers.Class(OpenLayers.Layer.XYZ, {
-    tileClass: CacheTile,
+OpenLayers.Layer.CouchDBTile = OpenLayers.Class(OpenLayers.Layer.XYZ, {
+    tileClass: OpenLayers.CouchDBTile,
 
     initialize: function(name, url, options) {
         if (options) {
@@ -96,5 +97,6 @@ CacheLayer = OpenLayers.Class(OpenLayers.Layer.XYZ, {
             this.map.addLayer(this.sourceLayer);
         }
         OpenLayers.Layer.XYZ.prototype.afterAdd.apply(this);
-    }
+    },
+    CLASS_NAME: "OpenLayers.Layer.CouchDBTile"
 });

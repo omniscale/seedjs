@@ -39,7 +39,7 @@ var sourceLayer, cacheLayer;
 
 function init() {
     sourceLayer = new OpenLayers.Layer.OSM("OpenStreetMap (CORS)");
-    cacheLayer = new CacheLayer("OpenStreetMap (CORS)",
+    cacheLayer = new OpenLayers.Layer.CouchDBTile("OpenStreetMap (CORS)",
         ['http://localhost:8888/proxy/http://localhost:5984/seedjs/${z}-${x}-${y}/tile']
         ,{sourceLayer: sourceLayer}
     );
