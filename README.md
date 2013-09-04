@@ -1,7 +1,7 @@
 SeedJS
 ======
 
-SeedJS is a JavaScript library for seeding tiles from sources like WMTS or WMS and storing them into a storage like CouchDB or LocalStorage.
+SeedJS is a JavaScript library for seeding tiles from sources like WMTS or WMS and storing them into a storage like CouchDB.
 
 Current features and limitations:
 
@@ -10,7 +10,7 @@ Current features and limitations:
 * requires HTLM5 Canvas and CORS support
 * only supports a OSM/Google Maps compatible tile grid
 * EPSG:3857 only, no reprojection of WMS sources and no meta-tiling
-
+* MIT License
 
 Current status: SeedJS is a proof of concept/prototype.
 
@@ -21,12 +21,12 @@ By default, you can only seed from local sources and can only store tiles in loc
 [corsa]: https://pypi.python.org/pypi/corsa
 
 
-## Example ##
+## API ##
 
 You need to create a source, a cache and a seeder.
 When the script is served from the CouchDB and the tile source sends CORS headers (as osm.org does):
 
-        var cache = new Seed.Cache.CouchDB('/seedjs/{TileMatrix}-{TileCol}-{TileRow}/tile');
+        var cache = new Seed.Cache.CouchDB('/seedjs/GoogleMapsCompatible-{TileMatrix}-{TileCol}-{TileRow}/tile');
         var source = new Seed.Source.WMTSSource('http://a.tile.openstreetmap.org/{TileMatrix}/{TileCol}/{TileRow}.png');
         var seeder = new Seed.Seeder({
             grid: new Seed.Grid(),
@@ -50,6 +50,16 @@ To let SeedJS use a CORS proxy for all external URLs:
         var source = new Seed.Source.WMSSource('http://x.osm.omniscale.net/proxy/service?LAYERS=osm&' +
             'FORMAT=image%2Fpng&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG%3A900913&' +
             'BBOX={BBOX}&WIDTH=256&HEIGHT=256&tiled=true');
-        var cache = new Seed.Cache.CouchDB('http://localhost:5984/seedjs/{TileMatrix}-{TileCol}-{TileRow}/tile');
+        var cache = new Seed.Cache.CouchDB('http://localhost:5984/seedjs/GoogleMapsCompatible-{TileMatrix}-{TileCol}-{TileRow}/tile');
 
 Requests will then go to http://localhost:8888/proxy/http://x.osm.omniscale.net/proxy/service and http://localhost:8888/proxy/http://localhost:5984/seedjs/.
+
+
+### Interactive seeding
+
+`example/seed.html` contains a simple OpenLayers client that demonstrates the SeedJS API.
+
+
+### Seeding on demand
+
+`example/offlinelayer` contains CouchDB tile layers for OpenLayers and Leaflet that can use these seeded tiles. The layers can also fetch tiles that are missing in the CouchDB cache from a separate source layer. Loaded tiles are then stored in the CouchDB for future requests, so that the cache is building up as the user browses the map.
