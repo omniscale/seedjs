@@ -47,9 +47,32 @@ CacheTile = OpenLayers.Class(OpenLayers.Tile.Image, {
             // stored
         };
 
-        var blob = dataURIToBlob(tileData);
+        var blob = this._dataURIToBlob(tileData);
         blob.type = 'image/png';
         req.send(blob);
+    },
+    /** Convert base64 encoded data to Blob.
+     * @param {string} base64 - binary data as base64 encoded string
+     */
+    _base64ToBlob: function(base64) {
+        var binary = atob(base64);
+        var len = binary.length;
+        var buffer = new ArrayBuffer(len);
+        var view = new Uint8Array(buffer);
+        for (var i = 0; i < len; i++) {
+            view[i] = binary.charCodeAt(i);
+        }
+        return new Blob([view]);
+    },
+
+    /**
+     * Convert data URI to Blob.
+     * @param {string} dataURI
+     */
+    _dataURIToBlob: function(dataURI) {
+        return this._base64ToBlob(
+            dataURI.replace(/^data:image\/(png|jpg);base64,/, "")
+        );
     }
 });
 
@@ -75,28 +98,3 @@ CacheLayer = OpenLayers.Class(OpenLayers.Layer.XYZ, {
         OpenLayers.Layer.XYZ.prototype.afterAdd.apply(this);
     }
 });
-
-
-/** Convert base64 encoded data to Blob.
- * @param {string} base64 - binary data as base64 encoded string
- */
-base64ToBlob = function(base64) {
-    var binary = atob(base64);
-    var len = binary.length;
-    var buffer = new ArrayBuffer(len);
-    var view = new Uint8Array(buffer);
-    for (var i = 0; i < len; i++) {
-        view[i] = binary.charCodeAt(i);
-    }
-    return new Blob([view]);
-};
-
-/**
- * Convert data URI to Blob.
- * @param {string} dataURI
- */
-dataURIToBlob = function(dataURI) {
-    return base64ToBlob(
-        dataURI.replace(/^data:image\/(png|jpg);base64,/, "")
-    );
-};
