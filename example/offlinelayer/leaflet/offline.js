@@ -1,5 +1,6 @@
-/* Copyright (c) 2013 Omniscale
- * Published under the MIT licensecouchDB
+/*
+ * Copyright (c) 2013 Omniscale
+ * Published under the MIT license.
  */
 
 L.TileLayer.CouchDB = L.TileLayer.extend({

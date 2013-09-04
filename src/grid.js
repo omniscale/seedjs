@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2013 Omniscale
+ * Published under the MIT license.
+ */
 
 /** BBOX.
  * @name BBox

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2013 Omniscale
+ * Published under the MIT license.
+ */
+
 OpenLayers.CouchDBTile = OpenLayers.Class(OpenLayers.Tile.Image, {
     crossOriginKeyword: "anonymous",
 
