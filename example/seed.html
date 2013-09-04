@@ -33,16 +33,16 @@
             function init(){
                 map = new OpenLayers.Map('map');
 
-                var wmsLayer = new OpenLayers.Layer.OSM("OSM");
+                var onlineLayer = new OpenLayers.Layer.OSM("OSM");
                 var offlineLayer = new OpenLayers.Layer.XYZ("Cached OSM",
-                    ["http://localhost:5984/seedjs/${z}-${x}-${y}/tile"],
+                    ["http://localhost:5984/seedjs/GoogleMapsCompatible-${z}-${x}-${y}/tile"],
                     {sphericalMercator: true}
                 );
                 boxLayer = new OpenLayers.Layer.Vector("Box layer");
                 boxLayer.events.register('beforefeatureadded', boxLayer, boxLayer.removeAllFeatures);
                 boxLayer.events.register('featureadded', boxLayer, updateEstimate);
 
-                map.addLayers([wmsLayer, offlineLayer, boxLayer]);
+                map.addLayers([onlineLayer, offlineLayer, boxLayer]);
 
                 var drawControl = new OpenLayers.Control.DrawFeature(boxLayer,
                     OpenLayers.Handler.RegularPolygon, {
@@ -64,8 +64,9 @@
 
             function seedProgress(progress) {
                 if (!progress.running) {
-                    document.getElementById("seedBtn").onclick = seed;
-                    document.getElementById("seedBtn").value = "Seed";
+                    var seedBtn = document.getElementById("seedBtn")
+                    seedBtn.onclick = seed;
+                    seedBtn.value = "Seed";
                 }
 
                 document.getElementById("seededTiles").innerHTML = progress.tiles;
@@ -92,8 +93,9 @@
 
             function stopSeed() {
                 seeder.stop();
-                document.getElementById("seedBtn").onclick = seed;
-                document.getElementById("seedBtn").value = "Seed";
+                var seedBtn = document.getElementById("seedBtn");
+                seedBtn.onclick = seed;
+                seedBtn.value = "Seed";
             }
 
             function seed() {
@@ -101,8 +103,9 @@
                     alert("draw a box first");
                     return;
                 }
-                document.getElementById("seedBtn").onclick = stopSeed;
-                document.getElementById("seedBtn").value = "Stop";
+                var seedBtn = document.getElementById("seedBtn");
+                seedBtn.onclick = stopSeed;
+                seedBtn.value = "Stop";
 
 
                 var bounds = boxLayer.features[0].geometry.getBounds();
