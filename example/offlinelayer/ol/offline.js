@@ -12,6 +12,9 @@ OpenLayers.CouchDBTile = OpenLayers.Class(OpenLayers.Tile.Image, {
                 this.imageReloadAttempts += 1;
                 // try to load img from sourceLayer
                 var newImgSrc = this.layer.sourceLayer.getURL(this.bounds);
+                if (OpenLayers.ProxyHost) {
+                    newImgSrc = OpenLayers.Request.makeSameOrigin(newImgSrc, OpenLayers.ProxyHost);
+                }
                 this.setImgSrc(newImgSrc);
 
                 // ideally we want to store the tile in the onImageLoad
@@ -97,6 +100,13 @@ OpenLayers.Layer.CouchDBTile = OpenLayers.Class(OpenLayers.Layer.XYZ, {
             this.map.addLayer(this.sourceLayer);
         }
         OpenLayers.Layer.XYZ.prototype.afterAdd.apply(this);
+    },
+    getURL: function(bounds) {
+        var url = OpenLayers.Layer.XYZ.prototype.getURL.call(this, bounds)
+        if (OpenLayers.ProxyHost) {
+            url = OpenLayers.Request.makeSameOrigin(url, OpenLayers.ProxyHost);
+        }
+        return url
     },
     CLASS_NAME: "OpenLayers.Layer.CouchDBTile"
 });
