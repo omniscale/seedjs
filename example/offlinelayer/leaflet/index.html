@@ -44,11 +44,10 @@ function init() {
     var map = L.map('map').setView([0, 0], 5);
     var sourceLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {});
 
-    L.tileLayer.cached('http://localhost:8888/proxy/http://localhost:5984/seedjs/{z}-{x}-{y}/tile', {
+    L.tileLayer.couchDB('http://localhost:8888/proxy/http://localhost:5984/seedjs/GoogleMapsCompatible-{z}-{x}-{y}/tile', {
         sourceLayer: sourceLayer
     }).addTo(map);
-    }
-
+}
     </script>
   </body>
 </html>

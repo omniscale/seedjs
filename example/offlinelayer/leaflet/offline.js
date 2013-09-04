@@ -1,4 +1,8 @@
-L.TileLayer.Cached = L.TileLayer.extend({
+/* Copyright (c) 2013 Omniscale
+ * Published under the MIT licensecouchDB
+ */
+
+L.TileLayer.CouchDB = L.TileLayer.extend({
     options: {
     },
 
@@ -102,6 +106,6 @@ L.TileLayer.Cached = L.TileLayer.extend({
     }
 })
 
-L.tileLayer.cached = function (url, options) {
-    return new L.TileLayer.Cached(url, options);
+L.tileLayer.couchDB = function (url, options) {
+    return new L.TileLayer.CouchDB(url, options);
 };
